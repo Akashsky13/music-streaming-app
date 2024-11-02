@@ -8,5 +8,14 @@ A simple music application built with Flask, HTML, and SQLite, featuring roles f
 ### Playlist Creation
 ![Playlist Creation](screenshots/playlist.png)
 
-### Song Review and Rating
+### Login page
 ![Song Review and Rating](screenshots/login.png)
+
+### search page
+![Song Review and Rating](screenshots/search.png)
+
+### creator page
+![Song Review and Rating](screenshots/creator.png)
+
+### user handeling page
+![Song Review and Rating](screenshots/block.png)
