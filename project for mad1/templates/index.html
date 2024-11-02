@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Music Streaming App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="templates/style.css">
+</head>
+
+<style>
+      
+body {
+    background: url('static/newone.jpg');
+}
+
+.bottom {
+    position: sticky;
+    height: 90px;
+    background-color: black;
+    color: white;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 8px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex-wrap: wrap;
+    background-color: black;
+    color: white;
+    font-family: 'Varela Round', sans-serif;
+    margin: 23px auto;
+    width: 80%;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+
+.song_list {
+    max-height: 200px; /* You can adjust the height based on your preference */
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: transparent transparent; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+}
+
+.song_list::-webkit-scrollbar {
+    width: 6px; /* Adjust the width as needed */
+}
+
+.song_list::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Hide scrollbar thumb */
+}
+
+.icons {
+    margin-top: 8px;
+}
+
+.icons i {
+    cursor: pointer;
+}
+
+#progressbar {
+    margin-top: 12px;
+    width: 80vw;
+    cursor: pointer;
+}
+
+.songitem {
+    height: 40px;
+    display: flex;
+    background-color: lightcyan;
+    color: black;
+    margin: 12px 9px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 34px;
+}
+.options-dropdown{
+    cursor: pointer;
+}
+.songlist {
+    flex: 1;
+    max-width: 40%;
+    margin-bottom: 20px;
+}
+
+.songitem img {
+    width: 56px;
+    margin: 0 10px;
+    border-radius: 10px;
+}
+
+.timestamp {
+    margin: 0 12px;
+}
+
+.timestamp i {
+    cursor: pointer;
+}
+
+.songInfo img {
+    opacity: 0;
+    transition: opacity 0.4s ease-in;
+}
+
+.options-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.options-content {
+    display: none;
+    position: absolute;
+    background-color: black;
+    color: white;
+    min-width: 110px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.options-content div {
+    padding: 12px;
+    cursor: pointer;
+}
+
+.options-content div:hover {
+    background-color: gray;
+}
+
+.show {
+    display: block;
+}
+
+form {
+    margin-top: 14px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    }
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 20px;
+    }
+
+.album-title {
+    margin-bottom: 0px;
+}
+
+.song-item {
+    height: 40px;
+    display: flex;
+    background-color: lightcyan;
+    color: black;
+    margin: 12px 9px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 34px;
+}
+
+    .song-item img {
+    width: 56px;
+    margin: 0 10px;
+    border-radius: 10px;
+}
+        
+    .song-item h5,
+    .songitem p
+    .song-item button {
+    margin-left: 20px;
+    
+}
+
+</style>
+
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index" style="color: white;">
+                <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;">
+                My music app
+            </a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav custom-navbar-nav mb-2 mb-lg-0">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="creator" style="color: white;"> Become Creator
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"  style="color: white;" href="/">Logout</a>
+                    </li>
+                    {% if user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"  style="color: white;" href="{{ url_for('playlist.playlist_page', user_id=user_id )}}">playlist</a>
+                       
+                    </li>
+                    
+                    {% endif %}
+    
+                    <li class="nav-item" style="margin-right:10px ;">
+                        <a class="nav-link active" aria-current="page"  style="color: white;" href="admin">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="search">
+                            <button type="button" class="btn btn-secondary btn-sm">Search</button>
+                        </a>
+                    </li>
+                    
+                    {% if first_name %}
+                    <li class="nav-item ms-auto">
+                        <a class="nav-link active" aria-current="page" style="color: white; margin-right: 10px;" href="/">
+                            Welcome {{ first_name }}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="container">
+                    <div class="song_list">
+                        <h3>New Trending Songs</h3>
+                        {% for song in songs_list4 %}
+                        <div class="songitem">
+                            <img src="{{ song.image_path }}">
+                            <span>{{ song.song_name }}</span>
+                            <span class="songlistplay">
+                                <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
+                                        class="far songitemplay fa-play-circle"></i></span>
+                            </span>
+                            <div class="options-dropdown">
+                                <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
+                                <!-- Existing options-content div -->
+                                <div class="options-content">
+                                    <label for="playlistDropdown">Add to Playlist:</label>
+                                    <select id="playlistDropdown" class="form-select">
+                                        {% for playlist in existing_playlists %}
+                                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                   
+                                    <button
+                                     class="add-to-playlist btn btn-primary"
+                                    data-song="{{ song.song_name }}"
+                                    data-file-path="{{song.file_path }}"
+                                    data-image-path="{{ song.image_path }}">  
+                                    Add to Playlist
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="container">
+                    <div class="song_list">
+                        <h3>Romantic Songs</h3>
+                        {% for song in songs_list2 %}
+                        <div class="songitem">
+                            <img src="{{ song.image_path }}">
+                            <span>{{ song.song_name }}</span>
+                            <span class="songlistplay">
+                                <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
+                                        class="far songitemplay fa-play-circle"></i></span>
+                                    </span>  
+                                    <div class="options-dropdown">
+                                        <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
+                                        
+                                        <div class="options-content">
+                                            <label for="playlistDropdown">Add to Playlist:</label>
+                                            <select id="playlistDropdown" class="form-select">
+                                                {% for playlist in existing_playlists %}
+                                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            
+                                           
+                                            <button
+                                             class="add-to-playlist btn btn-primary"
+                                            data-song="{{ song.song_name }}"
+                                            data-file-path="{{song.file_path }}"
+                                            data-image-path="{{ song.image_path }}">  
+                                            Add to Playlist
+                                            </button>
+        
+                                        </div>
+                                    </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="container">
+                            <div class="song_list">
+                                <h3>no copyright songs</h3>
+                                {% for song in songs_list1 %}
+                                <div class="songitem">
+                                    <img src="{{ song.image_path }}">
+                                    <span>{{ song.song_name }}</span>
+                                    <span class="songlistplay">
+                                        <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
+                                                class="far songitemplay fa-play-circle"></i></span>
+                                    </span>
+                                    <div class="options-dropdown">
+                                        <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
+                                        <!-- Existing options-content div -->
+                                        <div class="options-content">
+                                            <label for="playlistDropdown">Add to Playlist:</label>
+                                            <select id="playlistDropdown" class="form-select">
+                                                {% for playlist in existing_playlists %}
+                                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            
+                                           
+                                            <button
+                                             class="add-to-playlist btn btn-primary"
+                                            data-song="{{ song.song_name }}"
+                                            data-file-path="{{song.file_path }}"
+                                            data-image-path="{{ song.image_path }}">  
+                                            Add to Playlist
+                                            </button>
+        
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="container">
+                            <div class="song_list">
+                                <h3>Sadabahar songs</h3>
+                                {% for song in songs_list3 %}
+                                <div class="songitem">
+                                    <img src="{{ song.image_path }}">
+                                   <span>{{ song.song_name }}</span>
+                                    <span class="songlistplay">
+                                        <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
+                                                class="far songitemplay fa-play-circle"></i></span>
+                                            </span>  
+                                            <div class="options-dropdown">
+                                                <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
+                                                
+                                                <div class="options-content">
+                                                    <label for="playlistDropdown">Add to Playlist:</label>
+                                                    <select id="playlistDropdown" class="form-select">
+                                                        {% for playlist in existing_playlists %}
+                                                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    
+                                                   
+                                                    <button
+                                                     class="add-to-playlist btn btn-primary"
+                                                    data-song="{{ song.song_name }}"
+                                                    data-file-path="{{song.file_path }}"
+                                                    data-image-path="{{ song.image_path }}">  
+                                                    Add to Playlist
+                                                    </button>
+                
+                                                </div>
+                                            </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        {% for album in existing_albums %}
+                        <div class="col-md-6">
+                            <div class="container">
+                                <div class="song_list">
+                                <h4 class="album-title"><h3>{{ album.name }} </h3>{{album.genre}} | {{album.artist}}</h4>
+                                <h6>Average Album Rating: {{ album.average_album_rating }}</h6>
+                                {% for song in album.songs %}
+                                <div class="song-item">
+                                            <img src="{{song.image_path}}" class="rounded">
+                                            <h5>{{song.song_name}}</h5>
+                                            <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
+                                                class="far songitemplay fa-play-circle"></i></span>
+                
+                                            <div class="options-dropdown">
+                                                <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
+                
+                                                <div class="options-content">
+                                                    <label for="playlistDropdown">Add to Playlist:</label>
+                                                    <select id="playlistDropdown" class="form-select">
+                                                        {% for playlist in existing_playlists %}
+                                                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button
+                                                        class="add-to-playlist btn btn-primary"
+                                                        data-song="{{ song.song_name }}"
+                                                        data-file-path="{{song.file_path }}"
+                                                        data-image-path="{{ song.image_path }}">  
+                                                        Add to Playlist
+                                                    </button>
+                                                </div>
+                                            </div>
+                
+                                            <form method="post" action="/update_rating/{{ song.id }}" onsubmit="updateAverageRating({{ song.id }})">
+                                                <label for="new_rating"></label>
+                                                <input type="number" id="new_rating" name="new_rating" min="1" max="5" step="1" required>
+                                                <button type="submit" class="btn btn-primary btn-sm">Rate</button>
+                                            </form>
+                
+                                            <p id="averageRating{{ song.id }}" style="margin-right: 10px;">{{ song.average_rating }}</p>   
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </li>
+                            </div>
+                        </div> 
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+    <div class="bottom">
+        <input type="range" id="progressbar" min="0" max="100">
+        <div class="icons">
+            <i class="fas fa-2x fa-step-backward" id="previous"></i>
+            <i class="far fa-2x fa-play-circle" id="masterPlay"></i>
+            <i class="fas fa-2x fa-step-forward" id="next"></i>
+        </div>
+        <div class="songInfo">
+            <img src="static/GIF.gif" width="42px" alt="" id="gif">
+ <span id="masterSongName"></span>
+        </div>
+    </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audioElement = new Audio();
+            const masterPlay = document.getElementById('masterPlay');
+            const gif = document.getElementById('gif');
+            const songName = document.getElementById('masterSongName');
+            const progressBar = document.getElementById('progressbar');
+    
+            const togglePlay = () => {
+        if (audioElement.paused || audioElement.currentTime <= 0) {
+            audioElement.play();
+            masterPlay.classList.remove('fa-play-circle');
+            masterPlay.classList.add('fa-pause-circle');
+        } else {
+            audioElement.pause();
+            masterPlay.classList.remove('fa-pause-circle');
+            masterPlay.classList.add('fa-play-circle');
+        }
+    };
+            const updateProgressBar = () => {
+                const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                progressBar.value = progress;
+            };
+    
+            masterPlay.addEventListener('click', () => {
+                togglePlay();
+            });
+    
+            audioElement.addEventListener('timeupdate', () => {
+                updateProgressBar();
+            });
+
+
+            const playButtons = document.querySelectorAll('.songitemplay');
+
+            playButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        const songFilePath = event.target.id;
+        audioElement.src = songFilePath;
+        togglePlay();
+        const parentSongItem = event.target.closest('.songitem');
+        const songImage = parentSongItem.querySelector('img').src;
+        const songTitle = parentSongItem.querySelector('span').textContent;
+
+        // Log for debugging
+        console.log('Current song image path:', songImage);
+        console.log('Current song title:', songTitle);
+
+        // Update the bottom container elements
+        gif.src = songImage;
+        songName.textContent = songTitle;
+    });
+});
+
+
+            const optionsDropdowns = document.querySelectorAll('.options-dropdown');
+    
+            optionsDropdowns.forEach((dropdown) => {
+                dropdown.addEventListener('click', () => {
+                    const optionsContent = dropdown.querySelector('.options-content');
+                    optionsContent.classList.toggle('show');
+                });
+            });
+    
+            progressBar.addEventListener('input', () => {
+                const seekTime = (progressBar.value / 100) * audioElement.duration;
+                audioElement.currentTime = seekTime;
+            });
+    
+            const addToPlaylistButtons = document.querySelectorAll('.add-to-playlist');
+    
+            addToPlaylistButtons.forEach((button) => {
+                button.addEventListener('click', async (event) => {
+                    const songName = event.target.dataset.song;
+                    const filePath = event.target.dataset.filePath;
+                    const imagePath = event.target.dataset.imagePath;
+                    const playlistDropdown = document.getElementById('playlistDropdown');
+                    const selectedPlaylistId = playlistDropdown.value;
+    
+                    try {
+                        const response = await fetch(`/add_to_playlist/${selectedPlaylistId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                song_name: songName,
+                                file_path: filePath,
+                                image_path: imagePath,
+                            }),
+                        });
+    
+                        if (response.ok) {
+                            alert('Song added to playlist successfully!');
+                        } else {
+                            console.error('Failed to add song to playlist:', response.statusText);
+                            alert('Failed to add song to playlist. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error adding song to playlist:', error);
+                        alert('Failed to add song to playlist. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+  
+    <script>
+        function updateAverageRating(songId) {
+            console.log('Updating average rating for song ID:', songId);
+            var newRating = document.getElementById('new_rating').value;
+            var averageRatingElement = document.getElementById('averageRating' + songId);
+    
+            averageRatingElement.innerText = 'Average Rating: ' + newRating;
+        }
+    </script>
+
+
+
+    
+
+    <script src="https://kit.fontawesome.com/26504e4a1f.js" crossorigin="anonymous"></script>
+</body>
+
+</html> 

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My music app - Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            background: url('static/newone.jpg');
+        }
+
+        .bottom-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    pointer-events: none;
+    display: flex;
+    color: black;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+        .icons {
+    margin-left: 10px; /* Adjust as needed */
+}
+        .bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: white;
+            color: black;
+        }
+
+        #gif {
+            visibility: hidden;
+            transition: visibility 2s ease;
+        }
+        #progressbar {
+    flex: 1; /* Take up remaining space */
+}
+
+        
+
+        .song-card {
+            width: 250px;
+            margin: 0px;
+        }
+
+        .song-image {
+            max-width: 90%;
+            max-height: 150px;
+            object-fit: cover;
+            margin-left: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: white;
+        }
+        .songInfo {
+    display: flex;
+    align-items: center;
+}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" style="color: white;">
+                <img src="static/logo.jpg" class="rounded float-start"
+                    style="max-height: 40px; margin-right: 10px;"> My music app
+            </a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/" style="color:white !important">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="search">
+                            <button type="button" class="btn btn-secondary btn-sm">Search</button>
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="post" action="{{ url_for('search.search_song') }}">
+                    <div class="mb-3">
+                        <label for="search_term" class="form-label" style="color: white;">Search for a song</label>
+                        <input type="text" class="form-control" id="search_term" name="search_term" required>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="container">
+                    <div class="song_list">
+
+                        <div class="row">
+                            {% if songs_list %}
+                                {% for song in songs_list %}
+                                    <div class="col-md-4 songitem" onclick="togglePlayPauseCard(this, '{{ song.file_path }}')">
+                                        <div class="card song-card">
+                                            <img src="{{ song.image_path }}" alt="{{ song.song_name }}"
+                                                class="card-img-top song-image">
+                                            <div class="card-body">
+                                                <span class="card-title">{{ song.song_name }}</span>
+                                                <audio>
+                                                    <source src="{{ song.file_path }}" type="audio/mp3">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No results found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% for song in songs_list %}
+<div class="bottom-container">
+    <div class="bottom">
+        <input type="range" id="progressbar" min="0" max="100">
+        <div class="icons">
+            <i class="fas fa-2x fa-step-backward" id="previous"></i>
+            <i class="far fa-2x fa-play-circle" id="masterPlay" onclick="toggleMasterPlay()"></i>
+            <i class="fas fa-2x fa-step-forward" id="next"></i>
+        </div>
+        <div class="songInfo">
+            <img src="{{song.image_path}}" width="42px" alt="" id="gif"> <span id="masterSongName"></span>
+        </div>
+    </div>
+</div>
+{% endfor %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-SJFDN7AqVR2mLl6tF7Pwv3z0F5Ud6YOpeWzD+4e3NqprS5J8ZDz1zoVR9HqBoAB"
+        crossorigin="anonymous"></script>
+
+    <script>
+        var audioElement;
+        var progressBar;
+        var masterPlay;
+        var gif;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            audioElement = document.querySelector('audio');
+            progressBar = document.getElementById('progressbar');
+            masterPlay = document.getElementById('masterPlay');
+            gif = document.getElementById('gif');
+
+            masterPlay.addEventListener('click', function () {
+                togglePlayPause(audioElement);
+            });
+
+            audioElement.addEventListener('timeupdate', function () {
+                updateProgressBar();
+            });
+
+            audioElement.addEventListener('ended', function () {
+                resetProgressBar();
+            });
+        });
+
+        function toggleMasterPlay() {
+            togglePlayPause(audioElement);
+        }
+
+        function togglePlayPauseCard(card, filePath) {
+            var cardAudioElement = card.querySelector('audio');
+            var cardPlay = card.querySelector('.fa-play-circle');
+            var cardPause = card.querySelector('.fa-pause-circle');
+            var cardGif = card.querySelector('.song-image');
+
+            if (cardAudioElement) {
+                if (cardAudioElement.paused || cardAudioElement.currentTime <= 0) {
+                    // Pause all other playing songs
+                    pauseAllSongs();
+                    cardAudioElement.play();
+                    cardPlay.style.display = 'none';
+                    cardPause.style.display = 'block';
+                    cardGif.style.visibility = 'visible';
+                } else {
+                    cardAudioElement.pause();
+                    cardPlay.style.display = 'block';
+                    cardPause.style.display = 'none';
+                    cardGif.style.visibility = 'hidden';
+                }
+            }
+        }
+
+        function pauseAllSongs() {
+            var allAudioElements = document.querySelectorAll('audio');
+            var allPlayIcons = document.querySelectorAll('.fa-play-circle');
+            var allPauseIcons = document.querySelectorAll('.fa-pause-circle');
+            var allGifs = document.querySelectorAll('.song-image');
+
+            allAudioElements.forEach(function (audio) {
+                audio.pause();
+            });
+
+            allPlayIcons.forEach(function (play) {
+                play.style.display = 'block';
+            });
+
+            allPauseIcons.forEach(function (pause) {
+                pause.style.display = 'none';
+            });
+
+            allGifs.forEach(function (gif) {
+                gif.style.visibility = 'visible';
+            });
+        }
+
+        function togglePlayPause(audio) {
+            if (audio) {
+                if (audio.paused || audio.currentTime <= 0) {
+                    // Pause all other playing songs
+                    pauseAllSongs();
+                    audio.play();
+                    masterPlay.classList.remove('fa-play-circle');
+                    masterPlay.classList.add('fa-pause-circle');
+                    gif.style.visibility = 'visible';
+                } else {
+                    audio.pause();
+                    masterPlay.classList.remove('fa-pause-circle');
+                    masterPlay.classList.add('fa-play-circle');
+                    gif.style.visibility = 'hidden';
+                }
+            }
+        }
+
+        function updateProgressBar() {
+            var progress = (audioElement.currentTime / audioElement.duration) * 100;
+            progressBar.value = progress;
+        }
+
+        function resetProgressBar() {
+            progressBar.value = 0;
+        }
+    </script>
+
+    <script src="https://kit.fontawesome.com/26504e4a1f.js" crossorigin="anonymous"></script>
+
+</body>
+
+</html> 

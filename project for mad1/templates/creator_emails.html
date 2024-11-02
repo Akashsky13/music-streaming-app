@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Page - My Music App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<style>
+    .container {
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+        min-height: 20vh;
+        background-color:black;
+        color: white;
+        font-family: 'Varela Round', sans-serif;
+        margin: 23px auto;
+        width: 80%; 
+        border-radius: 20px;
+        padding: 10px;
+    }
+    body{
+        background: url('static/newone.jpg');
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg ">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" style="color: white;">
+                <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;"> My music app
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/" style="color: white;">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container">
+    <h3>Total creators - {{ creator_emails | length }}</h3>
+
+    <form method="GET" action="{{ url_for('adminpage.get_all_creators') }}" class="mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" name="search_query" placeholder="Search creators by email">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        <p>All Creators Emails </p>
+    </form>
+
+    <ul>
+        {% for email in creator_emails %}
+            <li>
+                {{ email }}
+                {% if email_blacklisted[email] %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                {% else %}
+                    <form method="post" action="{{ url_for('adminpage.blacklist_creator', email=email) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Blacklist</button>
+                    </form>
+                {% endif %}
+                <form method="post" action="{{ url_for('adminpage.unblacklist_creator', email=email) }}">
+                    <button type="submit" class="btn btn-success btn-sm">Unblacklist</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

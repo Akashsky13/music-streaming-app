@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music Streaming App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<style>
+  body {
+    background-color: lightcyan;
+  }
+</style>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;"> My
+        music app
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Creator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="creatorpage">Uploaded song</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">User Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/"> Logout</a>
+          </li>
+          <li class="nav-item dropdown">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="song_name" class="form-label">Song Name</label>
+            <input type="text" class="form-control" id="song_name" name="song_name" aria-describedby="emailHelp">
+          </div>
+          
+          <div class="mb-3">
+            <label for="song_image" class="form-label">Song Image</label>
+            <input type="file" class="form-control" id="song_image" name="song_image" aria-describedby="emailHelp" accept=".jpg">
+          </div>
+          
+          <div class="mb-3">
+            <label for="song_file" class="form-label">Song File</label>
+            <input type="file" class="form-control" id="song_file" name="song_file" aria-describedby="emailHelp" accept=".mp3">
+          </div>
+          
+          <button type="submit" class="btn btn-outline-primary">Upload</button>
+          
+          
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-eU0hr1x5jHq5eDFF1S9TF02A5v8y3Q1b8byUJRpWl1+ZcJl/+gWSYh2d++L+X5Z"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
