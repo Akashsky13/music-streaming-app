@@ -17,17 +17,25 @@ body {
 }
 
 .bottom {
-    position: sticky;
-    height: 90px;
-    background-color: black;
-    color: white;
+    position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
+    width: 200px; /* Set a fixed width for the element */
+    height: 90px;
+    
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     border-radius: 8px;
+    padding: 10px;
+    margin: 0 auto 10px auto; /* Center horizontally with 10px bottom margin */
+    z-index: 1000; /* Ensures it stays on top */
 }
+
+
 
 .container {
     display: flex;
@@ -235,171 +243,7 @@ li {
         </div>
     </nav>
     
-    
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="container">
-                    <div class="song_list">
-                        <h3>New Trending Songs</h3>
-                        {% for song in songs_list4 %}
-                        <div class="songitem">
-                            <img src="{{ song.image_path }}">
-                            <span>{{ song.song_name }}</span>
-                            <span class="songlistplay">
-                                <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
-                                        class="far songitemplay fa-play-circle"></i></span>
-                            </span>
-                            <div class="options-dropdown">
-                                <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
-                                <!-- Existing options-content div -->
-                                <div class="options-content">
-                                    <label for="playlistDropdown">Add to Playlist:</label>
-                                    <select id="playlistDropdown" class="form-select">
-                                        {% for playlist in existing_playlists %}
-                                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    
-                                   
-                                    <button
-                                     class="add-to-playlist btn btn-primary"
-                                    data-song="{{ song.song_name }}"
-                                    data-file-path="{{song.file_path }}"
-                                    data-image-path="{{ song.image_path }}">  
-                                    Add to Playlist
-                                    </button>
 
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="container">
-                    <div class="song_list">
-                        <h3>Romantic Songs</h3>
-                        {% for song in songs_list2 %}
-                        <div class="songitem">
-                            <img src="{{ song.image_path }}">
-                            <span>{{ song.song_name }}</span>
-                            <span class="songlistplay">
-                                <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
-                                        class="far songitemplay fa-play-circle"></i></span>
-                                    </span>  
-                                    <div class="options-dropdown">
-                                        <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
-                                        
-                                        <div class="options-content">
-                                            <label for="playlistDropdown">Add to Playlist:</label>
-                                            <select id="playlistDropdown" class="form-select">
-                                                {% for playlist in existing_playlists %}
-                                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            
-                                           
-                                            <button
-                                             class="add-to-playlist btn btn-primary"
-                                            data-song="{{ song.song_name }}"
-                                            data-file-path="{{song.file_path }}"
-                                            data-image-path="{{ song.image_path }}">  
-                                            Add to Playlist
-                                            </button>
-        
-                                        </div>
-                                    </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="container">
-                            <div class="song_list">
-                                <h3>no copyright songs</h3>
-                                {% for song in songs_list1 %}
-                                <div class="songitem">
-                                    <img src="{{ song.image_path }}">
-                                    <span>{{ song.song_name }}</span>
-                                    <span class="songlistplay">
-                                        <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
-                                                class="far songitemplay fa-play-circle"></i></span>
-                                    </span>
-                                    <div class="options-dropdown">
-                                        <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
-                                        <!-- Existing options-content div -->
-                                        <div class="options-content">
-                                            <label for="playlistDropdown">Add to Playlist:</label>
-                                            <select id="playlistDropdown" class="form-select">
-                                                {% for playlist in existing_playlists %}
-                                                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            
-                                           
-                                            <button
-                                             class="add-to-playlist btn btn-primary"
-                                            data-song="{{ song.song_name }}"
-                                            data-file-path="{{song.file_path }}"
-                                            data-image-path="{{ song.image_path }}">  
-                                            Add to Playlist
-                                            </button>
-        
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="container">
-                            <div class="song_list">
-                                <h3>Sadabahar songs</h3>
-                                {% for song in songs_list3 %}
-                                <div class="songitem">
-                                    <img src="{{ song.image_path }}">
-                                   <span>{{ song.song_name }}</span>
-                                    <span class="songlistplay">
-                                        <span class="timestamp">{{ song.duration }} <i id="{{ song.file_path }}"
-                                                class="far songitemplay fa-play-circle"></i></span>
-                                            </span>  
-                                            <div class="options-dropdown">
-                                                <i class="fas fa-ellipsis-v" id="optionsIcon"></i>
-                                                
-                                                <div class="options-content">
-                                                    <label for="playlistDropdown">Add to Playlist:</label>
-                                                    <select id="playlistDropdown" class="form-select">
-                                                        {% for playlist in existing_playlists %}
-                                                            <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                    
-                                                   
-                                                    <button
-                                                     class="add-to-playlist btn btn-primary"
-                                                    data-song="{{ song.song_name }}"
-                                                    data-file-path="{{song.file_path }}"
-                                                    data-image-path="{{ song.image_path }}">  
-                                                    Add to Playlist
-                                                    </button>
-                
-                                                </div>
-                                            </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="container-fluid">
                     <div class="row">
                         {% for album in existing_albums %}

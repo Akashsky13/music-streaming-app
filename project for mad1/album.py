@@ -9,14 +9,6 @@ def create_tables():
     connection = sqlite3.connect('song.db')
     cursor = connection.cursor()
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS creator (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            blacklisted INTEGER DEFAULT 0    
-        )
-    ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS albums (

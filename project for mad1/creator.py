@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for,session
+from flask import Blueprint, render_template, request, redirect, url_for, session
 import sqlite3
 from login import query_login_db
 
@@ -8,18 +8,27 @@ def create_login_table():
     try:
         with sqlite3.connect('song.db') as conn:
             cursor = conn.cursor()
+            # Create the table if it does not exist
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS creator (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     email TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    blacklisted INTEGER DEFAULT 0    
+                    password TEXT NOT NULL
                 )
             ''')
+
+            # Check if blacklisted column exists, add it if it doesn't
+            cursor.execute("PRAGMA table_info(creator)")
+            columns = [info[1] for info in cursor.fetchall()]
+            if 'blacklisted' not in columns:
+                cursor.execute("ALTER TABLE creator ADD COLUMN blacklisted INTEGER DEFAULT 0")
+                conn.commit()
+
     except sqlite3.Error as e:
-        print(f"Error creating table: {e}")
+        print(f"Error creating or modifying table: {e}")
 
 create_login_table()
+
 
 def get_creator_count():
     query = 'SELECT COUNT(*) FROM creator'
@@ -51,26 +60,29 @@ def creator_signup():
                 if existing_user['password'] == password:
                     blacklisted_status = existing_user['blacklisted']
 
+                    # Check if user is blacklisted
                     if blacklisted_status != 0:
-                        return render_template('creator.html', warning='Sorry, your account has been blacklisted. Contact support for assistance.')
+                        # Show a warning message if blacklisted
+                        return render_template('creator.html', warning='Your account is blacklisted. Please contact support.')
 
-                    new_users = query_login_db('SELECT * FROM creator WHERE email = ?', (email,), one=True)
-                    session['creator_id']=new_users['id']
-                    return redirect(url_for('album.album_page', creator_id=new_users['id']))
+                    # User is not blacklisted; proceed with login
+                    session['creator_id'] = existing_user['id']
+                    return redirect(url_for('album.album_page', creator_id=existing_user['id']))
+                else:
+                    return render_template('creator.html', warning='Incorrect password. Please try again.')
             else:
-                
+                # New user registration
                 try:
                     with sqlite3.connect('song.db') as conn:
                         cursor = conn.cursor()
                         cursor.execute('INSERT INTO creator (email, password) VALUES (?, ?)', (email, password))
                         conn.commit()
-                        new_users = query_login_db('SELECT * FROM creator WHERE email = ?', (email,), one=True)
-                        session['creator_id']=new_users['id']
-                    return redirect(url_for('album.album_page', creator_id=new_users['id']))
+                        new_user = query_login_db('SELECT * FROM creator WHERE email = ?', (email,), one=True)
+                        session['creator_id'] = new_user['id']
+                    return redirect(url_for('album.album_page', creator_id=new_user['id']))
 
                 except sqlite3.Error as e:
-                      print(f"Error inserting new row: {e}")
-                      return render_template('creator.html', warning='An error occurred during signup. Please try again.')
-
+                    print(f"Error inserting new row: {e}")
+                    return render_template('creator.html', warning='An error occurred during signup. Please try again.')
 
     return render_template('creator.html')

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My Music App - albums</title>
+    <title>My Music App - Albums</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
@@ -19,61 +19,34 @@
             background-color: #333;
             color: white;
             border-radius: 25px;
+            padding: 20px;
         }
 
         h3 {
             margin-bottom: 15px;
         }
 
-        form {
-            margin-bottom: 10px;
-            border-radius: 12px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 20px;
-        }
-
         .album-container {
-            border: 3px solid #ced4da;
-            padding: 10px;
+            border: 3px solid #6a829a;
+            padding: 15px;
             margin-bottom: 20px;
             border-radius: 12px;
-            margin-bottom: 5px;
+           
         }
 
-        .album-title {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .song-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            
-        }
-
-        .song-item img {
-            width: 140px;
-            margin-right: 10px;
+        .song-table img {
+            width: 80px;
             border-radius: 12px;
+        }
+
+        .song-table th, .song-table td {
+            color: black;
+            vertical-align: middle;
         }
 
         audio {
-            width: 50%; 
-            margin-top: 5px;
+            width: 150px;
         }
-        .song-item h5,
-        .song-item audio,
-        .song-item button {
-    margin-left: 12px;
-}
     </style>
 </head>
 
@@ -82,16 +55,15 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('index', creator_id=creator_id) }}" style="color: white;">
                 <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;"> My
-                music app
+                Music App
             </a>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" style="color: white;" href="index">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="search">
+                        <a class="nav-link active" href="search">
                             <button type="button" class="btn btn-secondary btn-sm">Search</button>
                         </a>
                     </li>
@@ -102,88 +74,102 @@
 
     <div class="container">
         <h3>Create a New Album</h3>
-        <form method="post" action="{{ url_for('album.album_page', creator_id=creator_id) }}">
-            <label for="album_name">Album Name:</label>
-            <input type="text" id="album_name" name="album_name" required>
+<form method="post" action="{{ url_for('album.album_page', creator_id=creator_id) }}">
+    <div class="row mb-2">
+        <div class="col-md-3">
+            <input type="text" id="album_name" name="album_name" class="form-control" placeholder="Album name" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="genre" name="genre" class="form-control" placeholder="Genre" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="artist" name="artist" class="form-control" placeholder="Artist" required>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Create Album</button>
+        </div>
+    </div>
+    <input type="hidden" name="user_id" value="{{ creator_id }}">
+</form>
 
-            <label for="genre">Genre:</label>
-            <input type="text" id="genre" name="genre" required>
 
-            <label for="artist">Artist:</label>
-            <input type="text" id="artist" name="artist" required>
-            <input type="hidden" name="user_id" value="{{ creator_id }}">
-            <button type="submit" class="btn btn-primary">Create Album</button>
-        </form>
-
+        {% for album in existing_albums %}
+        <div class="album-container">
+            <h4>{{ album.name }} - {{ album.genre }} | {{ album.artist }}</h4>
+            <p>Average Album Rating: {{ album.average_album_rating }}</p>
         
-
-        <ul>
-            {% for album in existing_albums %}
-            <li>
-                <div class="album-container">
-                    <h4 class="album-title"><h3>{{ album.name }} </h3>{{album.genre}} | {{album.artist}}</h4>
-                    <h3>Average Album Rating: {{ album.average_album_rating }}</h3>
-
+            <div class="row mb-3">
+                <div class="col-auto">
                     <form method="post" action="/delete_album/{{ album.id }}">
                         <button type="submit" class="btn btn-danger btn-sm">Delete album</button>
                     </form>
-
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-success btn-sm" onclick="toggleSongForm({{ album.id }})">Add Song</button>
+                </div>
+                <div class="col-auto">
                     <form method="post" action="/update_album/{{ album.id }}">
-                        <input type="text" id="new_album_name" name="new_album_name" required>
+                        <input type="text" id="new_album_name" name="new_album_name" required placeholder="New album name">
                         <button type="submit" class="btn btn-primary btn-sm">Update album</button>
                     </form>
-
-                    <button class="btn btn-success btn-sm" onclick="toggleSongForm({{ album.id }})">Add Song</button>
-
-                    <form method="post" action="/add_to_album/{{ album.id }}" id="addSongForm{{ album.id }}"
-                        style="display: none;" enctype="multipart/form-data">
-                        <label for="song_name">Name</label>
-                        <input type="text" id="song_name" name="song_name" required>
-
-                        <label for="file_path">Song</label>
-                        <input type="file" id="file_path" name="file_path" accept=".mp3" required>
-
-                        <label for="image_path">Image</label>
-                        <input type="file" id="image_path" name="image_path" accept=".jpg" required>
-
-                        <button type="submit" class="btn btn-primary btn-sm">Add Song</button>
-                    </form>
-
-                    {% for song in album.songs %}
-                    <div class="song-item">
-                        <img src="{{song.image_path}}" class="rounded">
-                        <h5>{{song.song_name}}</h5>
-                        <audio controls>
-                            <source src="{{ song.file_path }}" type="audio/mp3">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <button class="btn btn-warning btn-sm" onclick="toggleUpdateSongForm({{ album.id }}, {{ song.id }})">Update Song</button>
-
-                        
-                        <form method="post" action="/update_song/{{ song.id }}" id="updateSongForm{{ song.id }}" style="display: none;"
-                            enctype="multipart/form-data">
-                            <label for="new_song_name">New Song Name:</label>
-                            <input type="text" id="new_song_name" name="new_song_name" required>
-
-                            <label for="new_song_image">New Song Image:</label>
-                            <input type="file" id="new_song_image" name="new_song_image" accept=".jpg">
-
-                            <label for="new_song_file">New Song:</label>
-                            <input type="file" id="new_song_file" name="new_song_file" accept=".mp3">
-
-                            <button type="submit" class="btn btn-primary btn-sm">Update Song</button>
-                        </form>
-
-                        <form method="post" action="/remove_songs/{{ song.id }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                       <p>{{ song.average_rating }}</p>    
-                    </div>
-                    {% endfor %}
                 </div>
-            </li>
-            {% endfor %}
-        </ul>
+            </div>
+        
+            <form method="post" action="/add_to_album/{{ album.id }}" id="addSongForm{{ album.id }}" style="display: none;" enctype="multipart/form-data">
+                <label for="song_name">Name</label>
+                <input type="text" id="song_name" name="song_name" required>
+                <label for="file_path">Song</label>
+                <input type="file" id="file_path" name="file_path" accept=".mp3" required>
+                <label for="image_path">Image</label>
+                <input type="file" id="image_path" name="image_path" accept=".jpg" required>
+                <button type="submit" class="btn btn-primary btn-sm">Add Song</button>
+            </form>
+        
+            <table class="table song-table mt-3">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Song Name</th>
+                        <th>Audio</th>
+                        <th>Actions</th>
+                        <th>Average Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in album.songs %}
+                    <tr>
+                        <td><img src="{{ song.image_path }}" alt="Song Image"></td>
+                        <td>{{ song.song_name }}</td>
+                        <td>
+                            <audio controls>
+                                <source src="{{ song.file_path }}" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="toggleUpdateSongForm({{ album.id }}, {{ song.id }})" style="background-color: greenyellow;">Update</button>
+                            <form method="post" action="/remove_songs/{{ song.id }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                        <td>{{ song.average_rating }}</td>
+                    </tr>
+                    <tr id="updateSongForm{{ song.id }}" style="display: none;">
+                        <td colspan="5">
+                            <form method="post" action="/update_song/{{ song.id }}" enctype="multipart/form-data">
+                                <input type="text" name="new_song_name" placeholder="song name" required>
+                                <input type="file" name="new_song_image" placeholder="image" accept=".jpg">
+                                <input type="file" name="new_song_file" placeholder="new song_image" accept=".mp3">
+                                <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% endfor %}
     </div>
 
     <script>
@@ -194,25 +180,13 @@
 
         function toggleUpdateSongForm(albumId, songId) {
             var form = document.getElementById('updateSongForm' + songId);
-            form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+            form.style.display = (form.style.display === 'none') ? 'table-row' : 'none';
         }
     </script>
-    <script>
-        function updateAverageRating(songId) {
-            console.log('Updating average rating for song ID:', songId);
-            var newRating = document.getElementById('new_rating').value;
-            var averageRatingElement = document.getElementById('averageRating' + songId);
-            
-           
-            averageRatingElement.innerText = 'Average Rating: ' + newRating;
-        }
-    </script>
-    
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-SJFDN7AqVR2mLl6tF7Pwv3z0F5Ud6YOpeWzD+4e3NqprS5J8ZDz1zoVR9HqBoAB"
         crossorigin="anonymous"></script>
-   
 </body>
 
 </html>

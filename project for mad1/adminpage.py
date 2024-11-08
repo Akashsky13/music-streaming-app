@@ -18,7 +18,7 @@ def adminpage():
     
     from app import get_total_song_count
     from album import get_existing_albums
-    table_names = ["songlist4", "songlist2","songs"]
+    table_names = ["songs"]
     query = " UNION ".join([f"SELECT image_path, song_name, file_path FROM {table_name}" for table_name in table_names])
     all_songs = query_song_db(f"{query} ORDER BY song_name")
     total_count = get_total_song_count()
@@ -61,7 +61,7 @@ def adminpage():
     from album import get_existing_albums
     from login import get_user_count
     from creator import get_creator_count
-    table_names = ["songlist4", "songlist2", "songs"]
+    table_names = ["songs"]
     query = " UNION ".join([f"SELECT image_path, song_name, file_path, id FROM {table_name}" for table_name in table_names])
     all_songs = query_song_db(f"{query} ORDER BY song_name")
     total_count = get_total_song_count()

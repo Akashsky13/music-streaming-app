@@ -11,18 +11,17 @@
 
 <style>
     body {
-        background-color:black;
+        background-color: black;
         color: white;
     }
-
 </style>
 
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="index" style="color: white;">
-                <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;"> My
-                music app
+                <img src="static/logo.jpg" class="rounded float-start" style="max-height: 40px; margin-right: 10px;">
+                My music app
             </a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -32,8 +31,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Contact us</a>
                     </li>
-                    <li class="nav-item dropdown">
-                    </li>
                 </ul>
             </div>
         </div>
@@ -42,8 +39,15 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <form method="post" action="{{ url_for('creator.creator_signup') }}">
+                <!-- Display the warning message if present -->
+                {% if warning %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ warning }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
 
+                <form method="post" action="{{ url_for('creator.creator_signup') }}">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email address</label>
                         <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
